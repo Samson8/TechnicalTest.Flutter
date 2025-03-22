@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tech_task/core/constants/constants.dart';
 import 'package:flutter_tech_task/core/utils/bloc_resource.dart';
+import 'package:flutter_tech_task/features/models/post_model.dart';
 import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
 
 class ListPage extends StatefulWidget {
@@ -34,11 +35,11 @@ class _ListPageState extends State<ListPage> {
               return ListView.builder(
                   itemCount: state.data.length,
                   itemBuilder: (context, index) {
-                    final post = state.data[index];
+                    final post = PostModel.fromJson(state.data[index]);
                     return InkWell(
                       onTap: () {
                         Navigator.of(context).pushNamed(Constants.postDetail,
-                            arguments: {'id': post.id});
+                            arguments: {'id': post.id.toString()});
                       },
                       child: Container(
                         padding: const EdgeInsets.only(left: 10, right: 10),
@@ -46,11 +47,11 @@ class _ListPageState extends State<ListPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              post['title'],
+                              post.title!,
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Text(post['body']),
+                            Text(post.body!),
                             Container(height: 10),
                             const Divider(
                               thickness: 1,
@@ -62,7 +63,7 @@ class _ListPageState extends State<ListPage> {
                     );
                   });
             } else if (state is AppError) {
-              return Center(child: Text(state?.message ?? ''));
+              return Center(child: Text(state.message ?? ''));
             }
             return Center(child: Text('Nothing to show'));
           })),

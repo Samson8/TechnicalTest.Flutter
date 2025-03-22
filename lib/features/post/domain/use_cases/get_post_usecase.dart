@@ -7,7 +7,7 @@ class GetPostUsecase implements AbstractUseCase<Result, String> {
   GetPostUsecase(this.postRepository);
 
   @override
-  Future<Result> call({parameter}) async {
+  Future<Result> call(parameter) async {
     final response = await postRepository.getList();
     return response;
   }

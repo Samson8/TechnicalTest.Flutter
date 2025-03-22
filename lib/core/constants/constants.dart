@@ -5,4 +5,5 @@ class Constants {
 
   // Get_it locator constants
   static const String postUseCase = 'postUseCase';
+  static const String postDetailsUseCase = 'postDetailsUseCase';
 }
