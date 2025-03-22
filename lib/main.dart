@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tech_task/core/constants/constants.dart';
+import 'package:flutter_tech_task/core/injections.dart';
 import 'package:flutter_tech_task/features/details/presentation/page/details_page.dart';
-import 'package:flutter_tech_task/features/list/presentation/page/list_page.dart';
+import 'package:flutter_tech_task/features/post/presentation/page/post_page.dart';
 
-void main() {
+void main() async {
+  await initInjections();
   runApp(const MyApp());
 }
 
