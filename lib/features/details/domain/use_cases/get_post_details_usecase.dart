@@ -8,7 +8,8 @@ class GetPostDetailsUsecase implements AbstractUseCase<Result, String> {
 
   @override
   Future<Result> call(parameter) async {
-    final response = await postDetailsRepository.getPostById(parameter!);
+    final response =
+        await postDetailsRepository.getPostAndCommentById(parameter!);
     return response;
   }
 }

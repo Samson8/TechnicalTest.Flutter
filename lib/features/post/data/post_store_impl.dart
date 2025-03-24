@@ -12,7 +12,7 @@ class PostStoreImpl implements PostStore {
           .get(Uri.parse('https://jsonplaceholder.typicode.com/posts/'));
       return Result.success(await json.decode(response.body));
     } catch (e) {
-      return Result.failure(e?.toString());
+      return Result.failure(e.toString());
     }
   }
 }

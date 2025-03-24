@@ -7,12 +7,12 @@ class PostDetailsRepositoryImpl implements PostDetailsRepository {
   PostDetailsRepositoryImpl(this.postDetailsStore);
 
   @override
-  Future<Result> getPostById(String postId) async {
+  Future<Result> getPostAndCommentById(String postId) async {
     try {
-      final response = await postDetailsStore.getPostById(postId);
+      final response = await postDetailsStore.getPostAndCommentById(postId);
       return response;
     } catch (e) {
-      return Result.failure(e?.toString());
+      return Result.failure(e.toString());
     }
   }
 }

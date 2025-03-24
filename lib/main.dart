@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tech_task/core/constants/constants.dart';
 import 'package:flutter_tech_task/core/injections.dart';
+import 'package:flutter_tech_task/features/details/presentation/page/comments.dart';
 import 'package:flutter_tech_task/features/details/presentation/page/details_page.dart';
 import 'package:flutter_tech_task/features/post/presentation/page/post_page.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initInjections();
   runApp(const MyApp());
 }
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
       routes: {
         Constants.postList: (context) => ListPage(),
         Constants.postDetail: (context) => DetailsPage(),
+        Constants.comments: (context) => PostComments(),
       },
     );
   }

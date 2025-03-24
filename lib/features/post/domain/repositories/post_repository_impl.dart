@@ -12,7 +12,7 @@ class PostRepositoryImpl implements PostRepository {
       final response = await postStore.getList();
       return response;
     } catch (e) {
-      return Result.failure(e?.toString());
+      return Result.failure(e.toString());
     }
   }
 }

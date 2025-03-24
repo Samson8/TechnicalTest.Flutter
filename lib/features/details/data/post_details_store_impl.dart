@@ -6,13 +6,18 @@ import 'package:http/http.dart' as http;
 
 class PostDetailsStoreImpl implements PostDetailsStore {
   @override
-  Future<Result> getPostById(String postId) async {
+  Future<Result> getPostAndCommentById(String postId) async {
     try {
-      final response = await http.get(
-          Uri.parse('https://jsonplaceholder.typicode.com/posts/${postId}/'));
-      return Result.success(await json.decode(response.body));
+      final postResponse = await http.get(
+          Uri.parse('https://jsonplaceholder.typicode.com/posts/$postId/'));
+      final commentResponse = await http.get(Uri.parse(
+          'https://jsonplaceholder.typicode.com/posts/$postId/comments'));
+      return Result.success({
+        'post': json.decode(postResponse.body),
+        'comments': json.decode(commentResponse.body)
+      });
     } catch (e) {
-      return Result.failure(e?.toString());
+      return Result.failure(e.toString());
     }
   }
 }
