@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tech_task/core/constants/constants.dart';
 import 'package:flutter_tech_task/core/injections.dart';
 import 'package:flutter_tech_task/features/post/presentation/page/comments.dart';
 import 'package:flutter_tech_task/features/post/presentation/page/details_page.dart';
 import 'package:flutter_tech_task/features/post/presentation/page/post_page.dart';
+import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,17 +18,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return BlocProvider(
+      create: (_) => PostProvider()..add(LoadPosts()),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: Constants.postList,
+        routes: {
+          Constants.postList: (context) => ListPage(),
+          Constants.postDetail: (context) => DetailsPage(),
+          Constants.comments: (context) => PostComments(),
+        },
       ),
-      initialRoute: Constants.postList,
-      routes: {
-        Constants.postList: (context) => ListPage(),
-        Constants.postDetail: (context) => DetailsPage(),
-        Constants.comments: (context) => PostComments(),
-      },
     );
   }
 }

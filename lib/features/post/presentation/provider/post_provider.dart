@@ -35,6 +35,7 @@ AbstractUseCase<Result, String> get postUseCase => locator
 final _localStore = Localstore.instance;
 
 class PostProvider extends Bloc<AppEvent, AppState> {
+  int savePostCount = 0;
   PostProvider() : super(AppLoading()) {
     on<LoadPosts>((event, emit) async {
       try {
@@ -93,7 +94,7 @@ class PostProvider extends Bloc<AppEvent, AppState> {
     final data = docs.entries
         .map((entry) => PostWithComments.fromJson(entry.value))
         .toList();
-
+    savePostCount = data.length;
     return data;
   }
 

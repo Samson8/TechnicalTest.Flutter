@@ -16,104 +16,103 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final GlobalKey listViewKey = GlobalKey();
+  int? savedPostCount = 0;
+
+  void getPostCount() async {
+    final provider = context.read<PostProvider>();
+    final savedPosts = await provider.getSavedPosts();
+    if (mounted) {
+      setState(() {
+        savedPostCount = savedPosts.length;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this)
-      ..addListener(() {
-        if (_tabController.index == 1 && mounted) {
-          setState(() {
-            // need to setState ensure using updated context
-            listViewKey.currentContext?.read<PostProvider>().add(LoadPosts());
-          });
-        }
-      });
+    getPostCount();
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PostProvider()..add(LoadPosts()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("List of Posts"),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: 'API Posts'),
-              Tab(text: 'Saved Posts'),
-            ],
-          ),
-        ),
-        body: TabBarView(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("List of Posts"),
+        bottom: TabBar(
           controller: _tabController,
-          children: [
-            // Tab 1 - API Posts
-            BlocBuilder<PostProvider, AppState>(
-              builder: (context, state) {
-                if (state is AppLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is AppLoaded) {
-                  return ListView.builder(
-                    key: listViewKey,
-                    itemCount: state.data.length,
-                    itemBuilder: (context, index) {
-                      final post = PostModel.fromJson(state.data[index]);
-                      return PostItem(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(
-                            Constants.postDetail,
-                            arguments: {'id': post.id.toString()},
-                          );
-                        },
-                        post: post,
-                      );
-                    },
-                  );
-                } else if (state is AppError) {
-                  return Center(
-                      child: Text(state.message ?? 'Error loading posts'));
-                }
-                return const Center(child: Text('No data available'));
-              },
-            ),
-            // Tab 2 - Saved Posts
-            FutureBuilder<List<PostWithComments>>(
-              future: listViewKey.currentContext
-                  ?.read<PostProvider>()
-                  .getSavedPosts(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      final post = snapshot.data![index].post;
-                      return PostItem(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(
-                            Constants.postDetail,
-                            arguments: {
-                              Constants.postArgument: snapshot.data![index]
-                            },
-                          );
-                        },
-                        post: post,
-                      );
-                    },
-                  );
-                } else {
-                  return const Center(child: Text('No saved posts available.'));
-                }
-              },
-            ),
+          tabs: [
+            const Tab(text: 'API Posts'),
+            Tab(text: 'Saved Posts ($savedPostCount)'),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Tab 1 - API Posts
+          BlocBuilder<PostProvider, AppState>(
+            builder: (context, state) {
+              if (state is AppLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is AppLoaded) {
+                return ListView.builder(
+                  itemCount: state.data.length,
+                  itemBuilder: (context, index) {
+                    final post = PostModel.fromJson(state.data[index]);
+                    return PostItem(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          Constants.postDetail,
+                          arguments: {'id': post.id.toString()},
+                        ).then((value) => {getPostCount()});
+                      },
+                      post: post,
+                    );
+                  },
+                );
+              } else if (state is AppError) {
+                return Center(
+                    child: Text(state.message ?? 'Error loading posts'));
+              }
+              return const Center(child: Text('No data available'));
+            },
+          ),
+          // Tab 2 - Saved Posts
+          FutureBuilder<List<PostWithComments>>(
+            future: context //using the same context to access the provider.
+                .read<PostProvider>()
+                .getSavedPosts(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final post = snapshot.data![index].post;
+                    return PostItem(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          Constants.postDetail,
+                          arguments: {
+                            Constants.postArgument: snapshot.data![index]
+                          },
+                        ).then((value) => {getPostCount()});
+                      },
+                      post: post,
+                    );
+                  },
+                );
+              } else {
+                return const Center(child: Text('No saved posts available.'));
+              }
+            },
+          ),
+        ],
       ),
     );
   }
