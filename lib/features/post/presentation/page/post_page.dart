@@ -16,7 +16,7 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  BuildContext? providerBuildContext;
+  final GlobalKey listViewKey = GlobalKey();
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _ListPageState extends State<ListPage>
         if (_tabController.index == 1 && mounted) {
           setState(() {
             // need to setState ensure using updated context
-            providerBuildContext?.read<PostProvider>().add(LoadPosts());
+            listViewKey.currentContext?.read<PostProvider>().add(LoadPosts());
           });
         }
       });
@@ -53,12 +53,11 @@ class _ListPageState extends State<ListPage>
             // Tab 1 - API Posts
             BlocBuilder<PostProvider, AppState>(
               builder: (context, state) {
-                providerBuildContext = context;
-
                 if (state is AppLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is AppLoaded) {
                   return ListView.builder(
+                    key: listViewKey,
                     itemCount: state.data.length,
                     itemBuilder: (context, index) {
                       final post = PostModel.fromJson(state.data[index]);
@@ -82,8 +81,9 @@ class _ListPageState extends State<ListPage>
             ),
             // Tab 2 - Saved Posts
             FutureBuilder<List<PostWithComments>>(
-              future:
-                  providerBuildContext?.read<PostProvider>().getSavedPosts(),
+              future: listViewKey.currentContext
+                  ?.read<PostProvider>()
+                  .getSavedPosts(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

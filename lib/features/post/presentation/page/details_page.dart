@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tech_task/core/constants/constants.dart';
 import 'package:flutter_tech_task/core/utils/bloc_resource.dart';
-import 'package:flutter_tech_task/features/details/presentation/provider/post_details_provider.dart';
 import 'package:flutter_tech_task/features/models/post_model.dart';
 import 'package:flutter_tech_task/features/models/post_with_comments_model.dart';
+import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});
@@ -20,12 +20,12 @@ class _DetailsPageState extends State<DetailsPage> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
     return BlocProvider(
-        create: (_) => PostDetailsProvider()..add(LoadPostDetails(args?['id'])),
+        create: (_) => PostProvider()..add(LoadPostDetails(args?['id'])),
         child: Scaffold(
           appBar: AppBar(
             title: const Text('Post details'),
           ),
-          body: BlocBuilder<PostDetailsProvider, AppState>(
+          body: BlocBuilder<PostProvider, AppState>(
               //get post details from API.
               builder: (context, state) {
             if (args?[Constants.postArgument] != null) {
@@ -101,7 +101,7 @@ class _PostDetailItemState extends State<PostDetailItem> {
                     icon: Icon(Icons.comment)),
                 FutureBuilder<bool>(
                     future: context
-                        .read<PostDetailsProvider>()
+                        .read<PostProvider>()
                         .isPostSaved(post?.id?.toString()),
                     builder: (context, snapshot) {
                       bool isSaved = snapshot.data ?? false;
@@ -113,7 +113,7 @@ class _PostDetailItemState extends State<PostDetailItem> {
                         onPressed: () {
                           if (isSaved) {
                             context
-                                .read<PostDetailsProvider>()
+                                .read<PostProvider>()
                                 .add(RemovePostOffline(post?.id?.toString()));
                             showSnackbar(
                               context,
@@ -121,7 +121,7 @@ class _PostDetailItemState extends State<PostDetailItem> {
                             );
                           } else {
                             context
-                                .read<PostDetailsProvider>()
+                                .read<PostProvider>()
                                 .add(SavePostOffline(postWithComments!));
 
                             showSnackbar(

@@ -15,4 +15,20 @@ class PostStoreImpl implements PostStore {
       return Result.failure(e.toString());
     }
   }
+
+  @override
+  Future<Result> getPostAndCommentById(String postId) async {
+    try {
+      final postResponse = await http.get(
+          Uri.parse('https://jsonplaceholder.typicode.com/posts/$postId/'));
+      final commentResponse = await http.get(Uri.parse(
+          'https://jsonplaceholder.typicode.com/posts/$postId/comments'));
+      return Result.success({
+        'post': json.decode(postResponse.body),
+        'comments': json.decode(commentResponse.body)
+      });
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
 }

@@ -10,6 +10,25 @@ import 'package:localstore/localstore.dart';
 
 class LoadPosts extends AppEvent {}
 
+class LoadPostDetails extends AppEvent {
+  final String? postId;
+  LoadPostDetails(this.postId);
+}
+
+class SavePostOffline extends AppEvent {
+  final PostWithComments postWithComments;
+  SavePostOffline(this.postWithComments);
+}
+
+class RemovePostOffline extends AppEvent {
+  final String? postId;
+  RemovePostOffline(this.postId);
+}
+
+AbstractUseCase<Result, String> get postDetailsUseCase =>
+    locator.get<AbstractUseCase<Result, String>>(
+        instanceName: Constants.postDetailsUseCase);
+
 AbstractUseCase<Result, String> get postUseCase => locator
     .get<AbstractUseCase<Result, String>>(instanceName: Constants.postUseCase);
 
@@ -24,6 +43,41 @@ class PostProvider extends Bloc<AppEvent, AppState> {
         emit(AppLoaded(response.data));
       } catch (e) {
         emit(AppError("Failed to load lists: $e"));
+      }
+    });
+    on<LoadPostDetails>((event, emit) async {
+      try {
+        if (event.postId == null) {
+          return;
+        }
+        emit(AppLoading());
+        final response = await postDetailsUseCase.call(event.postId);
+        emit(AppLoaded(response.data));
+      } catch (e) {
+        emit(AppError("Failed to load post detals: \n$e"));
+      }
+    });
+
+    on<SavePostOffline>((event, emit) async {
+      try {
+        final postId = event.postWithComments.post?.id.toString();
+        await _localStore
+            .collection('savedPosts')
+            .doc(postId)
+            .set(event.postWithComments.toJson());
+      } catch (e) {
+        debugPrint('Error saving post offline: $e');
+      }
+    });
+
+    on<RemovePostOffline>((event, emit) async {
+      if (event.postId == null) {
+        return;
+      }
+      try {
+        await _localStore.collection('savedPosts').doc(event.postId).delete();
+      } catch (e) {
+        debugPrint('Error removing post offline: $e');
       }
     });
   }
@@ -41,5 +95,13 @@ class PostProvider extends Bloc<AppEvent, AppState> {
         .toList();
 
     return data;
+  }
+
+  Future<bool> isPostSaved(String? postId) async {
+    if (postId == null) {
+      return false;
+    }
+    final doc = await _localStore.collection('savedPosts').doc(postId).get();
+    return doc != null;
   }
 }

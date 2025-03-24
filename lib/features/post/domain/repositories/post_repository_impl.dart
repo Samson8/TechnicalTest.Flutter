@@ -15,4 +15,14 @@ class PostRepositoryImpl implements PostRepository {
       return Result.failure(e.toString());
     }
   }
+
+  @override
+  Future<Result> getPostAndCommentById(String postId) async {
+    try {
+      final response = await postStore.getPostAndCommentById(postId);
+      return response;
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
 }
