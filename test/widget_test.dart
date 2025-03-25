@@ -1,30 +1,41 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_tech_task/main.dart';
+import 'package:flutter_tech_task/core/constants/constants.dart';
+import 'package:flutter_tech_task/features/post/presentation/page/post_page.dart';
+import 'package:flutter_tech_task/features/post/presentation/page/details_page.dart';
+import 'package:flutter_tech_task/features/post/presentation/page/comments.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('App Initialization Tests', () {
+    testWidgets('App starts on ListPage with correct route',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MyApp());
+      expect(find.byType(ListPage), findsOneWidget);
+    });
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  group('Route Navigation Tests', () {
+    testWidgets('Navigates to DetailsPage', (WidgetTester tester) async {
+      await tester.pumpWidget(const MyApp());
+      await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      Navigator.of(tester.element(find.byType(ListPage)))
+          .pushNamed(Constants.postDetail, arguments: {'id': "1"});
+      await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(find.byType(DetailsPage), findsOneWidget);
+    });
+
+    testWidgets('Navigates to PostComments', (WidgetTester tester) async {
+      await tester.pumpWidget(const MyApp());
+      await tester.pumpAndSettle(Duration(seconds: 10));
+
+      Navigator.of(tester.element(find.byType(ListPage)))
+          .pushNamed(Constants.comments);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PostComments), findsOneWidget);
+    });
   });
 }

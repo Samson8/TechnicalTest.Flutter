@@ -1,6 +1,6 @@
 {
   "@@locale": "ru",
-  "appTitle": "Flutter Технический тест - SA",
+  "appTitle": "Flutter Tech Задача",
   "currentLocale": "Язык: {locale}",
   "listOfPost":"Список сообщений",
   "apiPosts":"Сообщения API",

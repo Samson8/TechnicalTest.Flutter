@@ -8,6 +8,7 @@ import 'package:flutter_tech_task/features/post/domain/repositories/post_reposit
 import 'package:flutter_tech_task/features/post/domain/repositories/post_repository_impl.dart';
 import 'package:flutter_tech_task/features/post/domain/use_cases/get_post_usecase.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 
 final locator = GetIt.instance;
 
@@ -16,7 +17,7 @@ Future<void> initInjections() async {
 
     //Post List classes and store
     ..registerLazySingleton<PostStore>(
-      () => PostStoreImpl(),
+      () => PostStoreImpl(client: http.Client()),
     )
     ..registerLazySingleton<PostRepository>(
       () => PostRepositoryImpl(locator()),
