@@ -5,6 +5,7 @@ import 'package:flutter_tech_task/core/utils/bloc_resource.dart';
 import 'package:flutter_tech_task/features/models/post_model.dart';
 import 'package:flutter_tech_task/features/models/post_with_comments_model.dart';
 import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});
@@ -23,7 +24,7 @@ class _DetailsPageState extends State<DetailsPage> {
         create: (_) => PostProvider()..add(LoadPostDetails(args?['id'])),
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Post details'),
+            title: Text(AppLocalizations.of(context)!.postDetails),
           ),
           body: BlocBuilder<PostProvider, AppState>(
               //get post details from API.
@@ -43,7 +44,7 @@ class _DetailsPageState extends State<DetailsPage> {
             } else if (state is AppError) {
               return Center(child: Text(state.message ?? ''));
             }
-            return Center(child: Text('Nothing to show'));
+            return Center(child: Text(AppLocalizations.of(context)!.nothing));
           }),
         ));
   }

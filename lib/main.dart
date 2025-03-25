@@ -6,6 +6,7 @@ import 'package:flutter_tech_task/features/post/presentation/page/comments.dart'
 import 'package:flutter_tech_task/features/post/presentation/page/details_page.dart';
 import 'package:flutter_tech_task/features/post/presentation/page/post_page.dart';
 import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,10 +22,12 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (_) => PostProvider()..add(LoadPosts()),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         initialRoute: Constants.postList,
         routes: {
           Constants.postList: (context) => ListPage(),

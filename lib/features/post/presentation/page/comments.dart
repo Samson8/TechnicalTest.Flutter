@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tech_task/features/models/comment_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostComments extends StatelessWidget {
   const PostComments({super.key});
@@ -10,7 +11,7 @@ class PostComments extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Post comments'),
+          title: Text(AppLocalizations.of(context)!.postComments),
         ),
         body: ListView.separated(
           separatorBuilder: (context, index) => Divider(

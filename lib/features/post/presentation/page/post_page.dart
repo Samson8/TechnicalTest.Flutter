@@ -5,6 +5,7 @@ import 'package:flutter_tech_task/core/utils/bloc_resource.dart';
 import 'package:flutter_tech_task/features/models/post_model.dart';
 import 'package:flutter_tech_task/features/models/post_with_comments_model.dart';
 import 'package:flutter_tech_task/features/post/presentation/provider/post_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListPage extends StatefulWidget {
   const ListPage({super.key});
@@ -37,16 +38,27 @@ class _ListPageState extends State<ListPage>
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("List of Posts"),
+        title: Text(AppLocalizations.of(context)!.listOfPost),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            const Tab(text: 'API Posts'),
-            Tab(text: 'Saved Posts ($savedPostCount)'),
+            Tab(text: AppLocalizations.of(context)!.apiPosts),
+            Tab(
+                text: AppLocalizations.of(context)!
+                    .savedPosts(savedPostCount as num)),
           ],
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+            ),
+            child: Text(locale.toString()),
+          )
+        ],
       ),
       body: TabBarView(
         controller: _tabController,
@@ -74,9 +86,11 @@ class _ListPageState extends State<ListPage>
                 );
               } else if (state is AppError) {
                 return Center(
-                    child: Text(state.message ?? 'Error loading posts'));
+                    child: Text(state.message ??
+                        AppLocalizations.of(context)!.errorLoadingPost));
               }
-              return const Center(child: Text('No data available'));
+              return Center(
+                  child: Text(AppLocalizations.of(context)!.noDataAvailable));
             },
           ),
           // Tab 2 - Saved Posts
@@ -88,7 +102,9 @@ class _ListPageState extends State<ListPage>
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return Center(
+                    child:
+                        Text(AppLocalizations.of(context)!.errorLoadingPost));
               } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
@@ -108,7 +124,8 @@ class _ListPageState extends State<ListPage>
                   },
                 );
               } else {
-                return const Center(child: Text('No saved posts available.'));
+                return Center(
+                    child: Text(AppLocalizations.of(context)!.noSavedPost));
               }
             },
           ),

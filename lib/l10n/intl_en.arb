@@ -1,0 +1,26 @@
+{
+  "@@locale": "en",
+  "appTitle": "Flutter Technical Test - SA",
+  "@appTitle": {
+    "description": "Main application title"
+  },
+  "currentLocale": "Locale: {locale}",
+  "listOfPost": "List of Posts",
+  "apiPosts":"API Posts",
+  "savedPosts":"Saved Posts ({count})",
+  "@savedPosts": {
+    "description": "Saved post tab bar title and count",
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "postDetails":"Post details",
+  "postComments":"Post comments",
+  "nothing":"Nothing to show",
+  "errorLoadingPost":"Error loading posts",
+  "noDataAvailable":"No data available",
+  "noSavedPost":"No saved posts available."
+}
