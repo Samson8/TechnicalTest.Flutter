@@ -1,4 +1,4 @@
-# Bright Flutter Technical Test
+# Flutter Technical Test
 
 ## The Starter Project
 
